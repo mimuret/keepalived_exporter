@@ -21,6 +21,7 @@ func main() {
 	metricsPath := flag.String("web.telemetry-path", "/metrics", "A path under which to expose metrics.")
 	keepalivedJson := flag.Bool("ka.json", false, "Send SIGJSON and decode JSON file instead of parsing text files.")
 	appVersion := flag.Bool("version", false, "Display version information.")
+	sigJSON := flag.Int("sigjson", 37, "SIGJSON number.")
 
 	flag.Parse()
 
@@ -31,7 +32,7 @@ func main() {
 
 	registry := prometheus.NewRegistry()
 
-	if coll, err := collector.NewKACollector(*keepalivedJson); err == nil {
+	if coll, err := collector.NewKACollector(*keepalivedJson, *sigJSON); err == nil {
 		registry.MustRegister(coll)
 	} else {
 		log.Fatal(err)

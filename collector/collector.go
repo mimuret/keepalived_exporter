@@ -17,12 +17,6 @@ import (
 	"github.com/shirou/gopsutil/process"
 )
 
-// Signals.
-const (
-	SIGRTMIN = syscall.Signal(32)
-	SIGJSON  = syscall.Signal(SIGRTMIN + 4)
-)
-
 // States.
 const (
 	Init = iota
@@ -84,16 +78,17 @@ type Stats struct {
 // KACollector type.
 type KACollector struct {
 	useJSON bool
+	sigJSON syscall.Signal
 	metrics map[string]*prometheus.Desc
 	handle  *ipvs.Handle
 	mutex   sync.Mutex
 }
 
 // NewKACollector creates an KACollector.
-func NewKACollector(useJSON bool) (*KACollector, error) {
+func NewKACollector(useJSON bool, sigJSON int) (*KACollector, error) {
 	coll := &KACollector{}
 	coll.useJSON = useJSON
-
+	coll.sigJSON = syscall.Signal(sigJSON)
 	labelsVrrp := []string{"name", "intf", "vrid", "state"}
 	metrics := map[string]*prometheus.Desc{
 		"keepalived_up":                       prometheus.NewDesc("keepalived_up", "Status", nil, nil),
@@ -294,7 +289,7 @@ func (k *KACollector) signal(sig syscall.Signal) error {
 func (k *KACollector) json() ([]KAStats, error) {
 	kaStats := make([]KAStats, 0)
 
-	err := k.signal(SIGJSON)
+	err := k.signal(k.sigJSON)
 	if err != nil {
 		return kaStats, err
 	}
