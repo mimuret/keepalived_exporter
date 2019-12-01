@@ -2,7 +2,7 @@ module github.com/gen2brain/keepalived_exporter
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
-	github.com/docker/libnetwork v0.8.0-dev.2.0.20191022201816-571783238bee
+	github.com/docker/libnetwork v0.8.0-dev.2.0.20191115224009-1680ce717394
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
