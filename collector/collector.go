@@ -25,7 +25,7 @@ const (
 	Fault
 )
 
-var proto2string = map[uint16]string{
+var proto2string = map[int]string{
 	syscall.IPPROTO_TCP: "tcp",
 	syscall.IPPROTO_UDP: "udp",
 }
@@ -223,9 +223,8 @@ func (k *KACollector) Collect(ch chan<- prometheus.Metric) {
 		}
 
 		addr := s.Address.String() + ":" + strconv.Itoa(int(s.Port))
-		proto := strconv.Itoa(int(s.Protocol))
-		protoStr, _ := proto2string[proto]
-		service := protoStr + ":/" + addr
+		proto, _ := proto2string[int(s.Protocol)]
+		service := proto + ":/" + addr
 		ch <- prometheus.MustNewConstMetric(k.metrics["keepalived_lvs_vip_in_packets"], prometheus.CounterValue,
 			float64(s.Stats.PacketsIn), service, addr, proto)
 		ch <- prometheus.MustNewConstMetric(k.metrics["keepalived_lvs_vip_out_packets"], prometheus.CounterValue,
